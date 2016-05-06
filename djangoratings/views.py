@@ -29,13 +29,15 @@ class AddRatingView(object):
             'field': field,
             'score': score,
         })
-        
-        had_voted = bool(field.get_rating_for_user(request.user, request.META['REMOTE_ADDR'], request.COOKIES))
+        ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+        if len(ip.split(",")) > 1:
+            ip = ip.split(",")[0]
+        had_voted = bool(field.get_rating_for_user(request.user, ip, request.COOKIES))
         
         context['had_voted'] = had_voted
                     
         try:
-            adds = field.add(score, request.user, request.META.get('REMOTE_ADDR'), request.COOKIES)
+            adds = field.add(score, request.user, ip, request.COOKIES)
         except IPLimitReached:
             return self.too_many_votes_from_ip_response(request, context)
         except AuthRequired:
