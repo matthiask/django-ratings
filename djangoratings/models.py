@@ -17,18 +17,19 @@ except ImportError:
 
 from managers import VoteManager, SimilarUserManager
 
-class Vote(models.Model):
-    content_type    = models.ForeignKey(ContentType, related_name="votes")
-    object_id       = models.PositiveIntegerField()
-    key             = models.CharField(max_length=32)
-    score           = models.IntegerField()
-    user            = models.ForeignKey(User, blank=True, null=True, related_name="votes")
-    ip_address      = models.GenericIPAddressField() if hasattr(models,"GenericIPAddressField") else models.IPAddressField() 
-    cookie          = models.CharField(max_length=32, blank=True, null=True)
-    date_added      = models.DateTimeField(default=now, editable=False)
-    date_changed    = models.DateTimeField(default=now, editable=False)
 
-    objects         = VoteManager()
+class Vote(models.Model):
+    content_type = models.ForeignKey(ContentType, related_name="votes")
+    object_id = models.PositiveIntegerField()
+    key = models.CharField(max_length=32)
+    score = models.IntegerField()
+    user = models.ForeignKey(User, blank=True, null=True, related_name="votes")
+    ip_address = models.GenericIPAddressField()
+    ip_address      = models.GenericIPAddressField() if hasattr(models,"GenericIPAddressField") else models.IPAddressField() 
+    cookie = models.CharField(max_length=32, blank=True, null=True)
+    date_added = models.DateTimeField(default=now, editable=False)
+    date_changed = models.DateTimeField(default=now, editable=False)
+    objects = VoteManager()
 
     content_object  = GenericForeignKey()
 
