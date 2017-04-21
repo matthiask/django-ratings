@@ -14,7 +14,7 @@ register = template.Library()
 def resolve_variable(path,context):
     if django.VERSION[:2] < (1, 10):
         return template.resolve_variable(path,context)
-    else
+    else:
         return template.Variable(path).resolve(context)
 
 class RatingByRequestNode(template.Node):
