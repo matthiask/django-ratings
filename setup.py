@@ -12,6 +12,7 @@ setup(
     ],
     tests_require=[
         'dj-database-url==0.3.0',
+        'psycopg2==2.6.1',
     ],
     packages=find_packages(),
     include_package_data=True,
