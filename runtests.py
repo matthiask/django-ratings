@@ -8,7 +8,6 @@ try:
     settings.configure(
         DEBUG=False,
         USE_TZ=True,
-        ROOT_URLCONF="tests.test_project.urls",
         INSTALLED_APPS=[
             "django.contrib.staticfiles",
             "django.contrib.auth",
