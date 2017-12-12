@@ -2,9 +2,11 @@ import sys
 
 from os import getenv
 
-try:
-    from django.conf import settings
+from django.conf import settings
 
+import dj_database_url
+
+try:
     settings.configure(
         DEBUG=False,
         USE_TZ=True,
@@ -21,6 +23,9 @@ try:
                 'DIRS': [],
                 'APP_DIRS': True,
         }],
+        DATABASES = {
+           'default': dj_database_url.config(default=getenv('DATABASE_URL', 'sqlite://db.sql'))
+        },
         SITE_ID=1,
         MIDDLEWARE_CLASSES=(),
         STATIC_URL='/static/',
