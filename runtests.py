@@ -1,31 +1,65 @@
-#!/usr/bin/env python
 import sys
 
-from os.path import dirname, abspath
+from os import getenv
 
-from django.conf import settings
+try:
+    from django.conf import settings
 
-if not settings.configured:
     settings.configure(
-        DATABASE_ENGINE='sqlite3',
+        DEBUG=False,
+        USE_TZ=True,
+        ROOT_URLCONF="tests.test_project.urls",
         INSTALLED_APPS=[
-            'django.contrib.auth',
-            'django.contrib.contenttypes',
-            'djangoratings',
-        ]
+            "django.contrib.staticfiles",
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "django.contrib.sites",
+            "djangoratings",
+        ],
+        TEMPLATES = [
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [],
+                'APP_DIRS': True,
+        }],
+        SITE_ID=1,
+        MIDDLEWARE_CLASSES=(),
+        STATIC_URL='/static/',
     )
 
-from django.test.simple import run_tests
+    try:
+        import django
+        setup = django.setup
+    except AttributeError:
+        pass
+    else:
+        setup()
+
+except ImportError:
+    import traceback
+    traceback.print_exc()
+    raise ImportError(
+        "To fix this error, run: pip install -r requirements-test.txt"
+    )
 
 
-def runtests(*test_args):
+from django.test.utils import get_runner
+
+
+def run_tests(*test_args):
     if not test_args:
-        test_args = ['djangoratings']
-    parent = dirname(abspath(__file__))
-    sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive=True)
-    sys.exit(failures)
+        test_args = ['tests']
+
+    # Run tests
+    TestRunner = get_runner(settings)
+    test_runner = TestRunner()
+
+    failures = test_runner.run_tests(test_args)
+
+    if failures:
+        sys.exit(bool(failures))
+    sys.exit(0)
 
 
 if __name__ == '__main__':
-    runtests(*sys.argv[1:])
+    run_tests(*sys.argv[1:])
