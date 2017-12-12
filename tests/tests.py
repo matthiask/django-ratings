@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
+from djangoratings.exceptions import (
+    IPLimitReached,
+)
 from djangoratings.models import Vote, SimilarUser, IgnoredObject
 from djangoratings.fields import AnonymousRatingField, RatingField
 
