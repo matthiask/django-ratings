@@ -10,7 +10,7 @@ setup(
     description='Generic Ratings in Django',
     url='http://github.com/dcramer/django-ratings',
     install_requires=[
-        'django',
+        'Django>=1.5.9,<2.0',
     ],
     packages=find_packages(),
     include_package_data=True,
