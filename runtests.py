@@ -14,8 +14,6 @@ def run_tests(*test_args):
 
     try:
         django.setup()
-        from django.core.management import call_command
-        call_command('makemigrations', 'tests')
     except AttributeError:
         pass  # No setup on Django 1.6
 

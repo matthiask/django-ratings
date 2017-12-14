@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from djangoratings.exceptions import IPLimitReached
+from djangoratings.models import Vote
 
 from tests.models import RatingTestModel
 
