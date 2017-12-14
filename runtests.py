@@ -1,68 +1,29 @@
+import os
 import sys
-
-from os import getenv
-
-from django.conf import settings
-
-import dj_database_url
-
-try:
-    settings.configure(
-        DEBUG=False,
-        USE_TZ=True,
-        INSTALLED_APPS=[
-            "django.contrib.staticfiles",
-            "django.contrib.auth",
-            "django.contrib.contenttypes",
-            "django.contrib.sites",
-            "djangoratings",
-        ],
-        TEMPLATES = [
-            {
-                'BACKEND': 'django.template.backends.django.DjangoTemplates',
-                'DIRS': [],
-                'APP_DIRS': True,
-        }],
-        DATABASES = {
-           'default': dj_database_url.config(default=getenv('DATABASE_URL', 'sqlite://db.sql'))
-        },
-        SITE_ID=1,
-        MIDDLEWARE_CLASSES=(),
-        STATIC_URL='/static/',
-    )
-
-    try:
-        import django
-        setup = django.setup
-    except AttributeError:
-        pass
-    else:
-        setup()
-
-except ImportError:
-    import traceback
-    traceback.print_exc()
-    raise ImportError(
-        "To fix this error, run: pip install -r requirements-test.txt"
-    )
-
-
-from django.test.utils import get_runner
 
 
 def run_tests(*test_args):
     if not test_args:
         test_args = ['tests']
 
-    # Run tests
+    os.environ['DJANGO_SETTINGS_MODULE'] = os.getenv('DJANGO_SETTINGS_MODULE', 'tests.settings')
+
+    import django
+    from django.conf import settings
+    from django.test.utils import get_runner
+
+    try:
+        django.setup()
+        from django.core.management import call_command
+        call_command('makemigrations', 'tests')
+    except AttributeError:
+        pass  # No setup on Django 1.6
+
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-
     failures = test_runner.run_tests(test_args)
 
-    if failures:
-        sys.exit(bool(failures))
-    sys.exit(0)
+    sys.exit(bool(failures))
 
 
 if __name__ == '__main__':
