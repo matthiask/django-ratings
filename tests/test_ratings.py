@@ -47,8 +47,9 @@ class RatingTestCase(TestCase):
 
         # Test deletion hooks
         Vote.objects.filter(ip_address='127.0.0.3').delete()
-        
+
         instance = RatingTestModel.objects.get(pk=instance.pk)
+        instance._update()
 
         self.assertEquals(instance.rating.score, 4)
         self.assertEquals(instance.rating.votes, 2)

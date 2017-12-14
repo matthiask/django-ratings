@@ -27,7 +27,8 @@ class VoteQuerySet(QuerySet):
             obj.save()
         
         return retval
-        
+
+
 class VoteManager(Manager):
     def get_query_set(self):
         return VoteQuerySet(self.model)
@@ -44,6 +45,7 @@ class VoteManager(Manager):
         else:
             vote_dict = {}
         return vote_dict
+
 
 class SimilarUserManager(Manager):
     def get_recommendations(self, user, model_class, min_score=1):
