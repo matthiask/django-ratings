@@ -8,11 +8,11 @@ setup(
     description='Generic Ratings in Django',
     url='http://github.com/dcramer/django-ratings',
     install_requires=[
-        'Django>=1.7,<2.0',
+        'Django>=1.8,<2.0',
     ],
     tests_require=[
         'dj-database-url==0.3.0',
-        'psycopg2==2.7.1',
+        'MySQL-python==1.2.3',
     ],
     packages=find_packages(),
     include_package_data=True,
