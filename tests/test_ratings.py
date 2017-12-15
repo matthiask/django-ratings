@@ -49,7 +49,8 @@ class RatingTestCase(TestCase):
         Vote.objects.filter(ip_address='127.0.0.3').delete()
 
         instance = RatingTestModel.objects.get(pk=instance.pk)
-        instance._update()
+        instance.rating._update()
+        instance.rating2._update()
 
         self.assertEquals(instance.rating.score, 4)
         self.assertEquals(instance.rating.votes, 2)

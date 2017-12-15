@@ -3,7 +3,7 @@ import random
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.test import TransactionTestCase
 
 from djangoratings.exceptions import IPLimitReached
 from djangoratings.models import Vote, SimilarUser, IgnoredObject
@@ -13,7 +13,7 @@ from tests.models import RatingTestModel
 settings.RATINGS_VOTES_PER_IP = 1
 
 
-class RecommendationsTestCase(TestCase):
+class RecommendationsTestCase(TransactionTestCase):
     def setUp(self):
         self.instance = RatingTestModel.objects.create()
         self.instance2 = RatingTestModel.objects.create()
