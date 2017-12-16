@@ -11,23 +11,24 @@ class VoteQuerySet(QuerySet):
         from fields import RatingField
 
         qs = self.distinct().values_list('content_type', 'object_id').order_by('content_type')
-    
+
         to_update = []
         for content_type, objects in itertools.groupby(qs, key=lambda x: x[0]):
             model_class = ContentType.objects.get(pk=content_type).model_class()
             if model_class:
                 to_update.extend(list(model_class.objects.filter(pk__in=list(objects)[0])))
-        
+
         retval = super(VoteQuerySet, self).delete(*args, **kwargs)
-        
+
         # TODO: this could be improved
         for obj in to_update:
             for field in getattr(obj, '_djangoratings', []):
                 getattr(obj, field.name)._update(commit=False)
             obj.save()
-        
+
         return retval
-        
+
+
 class VoteManager(Manager):
     def get_query_set(self):
         return VoteQuerySet(self.model)
@@ -45,19 +46,20 @@ class VoteManager(Manager):
             vote_dict = {}
         return vote_dict
 
+
 class SimilarUserManager(Manager):
     def get_recommendations(self, user, model_class, min_score=1):
         from djangoratings.models import Vote, IgnoredObject
-        
+
         content_type = ContentType.objects.get_for_model(model_class)
-        
+
         params = dict(
             v=Vote._meta.db_table,
             sm=self.model._meta.db_table,
             m=model_class._meta.db_table,
             io=IgnoredObject._meta.db_table,
         )
-        
+
         objects = model_class._default_manager.extra(
             tables=[params['v']],
             where=[
@@ -72,16 +74,8 @@ class SimilarUserManager(Manager):
             params=[content_type.id, user.id, min_score, user.id, user.id]
         ).distinct()
 
-        # objects = model_class._default_manager.filter(pk__in=content_type.votes.extra(
-        #     where=['user_id IN (select to_user_id from %s where from_user_id = %d and exclude = 0)' % (self.model._meta.db_table, user.pk)],
-        # ).filter(score__gte=min_score).exclude(
-        #     object_id__in=IgnoredObject.objects.filter(content_type=content_type, user=user).values_list('object_id', flat=True),
-        # ).exclude(
-        #     object_id__in=Vote.objects.filter(content_type=content_type, user=user).values_list('object_id', flat=True)
-        # ).distinct().values_list('object_id', flat=True))
-        
         return objects
-    
+
     def update_recommendations(self):
         # TODO: this is mysql only atm
         # TODO: this doesnt handle scores that have multiple values (e.g. 10 points, 5 stars)

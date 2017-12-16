@@ -1,0 +1,11 @@
+machine:
+  environment:
+    DATABASE_URL: mysql://ubuntu:@127.0.0.1/circle_test
+  python:
+    version: 2.7.6
+
+dependencies:
+  pre:
+    - pip install -U pip tox tox-pyenv
+    - pyenv local 2.7.11
+    - tox --notest  # Sets up the virtualenvs to be cached without running the tests.

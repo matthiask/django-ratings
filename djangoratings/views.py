@@ -9,22 +9,22 @@ from default_settings import RATINGS_VOTES_PER_IP
 class AddRatingView(object):
     def __call__(self, request, content_type_id, object_id, field_name, score):
         """__call__(request, content_type_id, object_id, field_name, score)
-        
+
         Adds a vote to the specified model field."""
-        
+
         try:
             instance = self.get_instance(content_type_id, object_id)
         except ObjectDoesNotExist:
             raise Http404('Object does not exist')
-        
+
         context = self.get_context(request)
         context['instance'] = instance
-        
+
         try:
             field = getattr(instance, field_name)
         except AttributeError:
             return self.invalid_field_response(request, context)
-        
+
         context.update({
             'field': field,
             'score': score,
@@ -33,9 +33,9 @@ class AddRatingView(object):
         if len(ip.split(",")) > 1:
             ip = ip.split(",")[0]
         had_voted = bool(field.get_rating_for_user(request.user, ip, request.COOKIES))
-        
+
         context['had_voted'] = had_voted
-                    
+
         try:
             adds = field.add(score, request.user, ip, request.COOKIES)
         except IPLimitReached:
@@ -51,10 +51,10 @@ class AddRatingView(object):
         if had_voted:
             return self.rating_changed_response(request, context, adds)
         return self.rating_added_response(request, context, adds)
-    
+
     def get_context(self, request, context={}):
         return context
-    
+
     def render_to_response(self, template, context, request):
         raise NotImplementedError
 
@@ -71,7 +71,7 @@ class AddRatingView(object):
             else:
                 response.set_cookie(cookie_name, cookie, 31536000, path='/') # TODO: move cookie max_age to settings
         return response
-    
+
     def rating_added_response(self, request, context, adds={}):
         response = HttpResponse('Vote recorded.')
         if 'cookie' in adds:
@@ -86,27 +86,27 @@ class AddRatingView(object):
         response = HttpResponse('You must be logged in to vote.')
         response.status_code = 403
         return response
-    
+
     def cannot_change_vote_response(self, request, context):
         response = HttpResponse('You have already voted.')
         response.status_code = 403
         return response
-    
+
     def cannot_delete_vote_response(self, request, context):
         response = HttpResponse('You can\'t delete this vote.')
         response.status_code = 403
         return response
-    
+
     def invalid_field_response(self, request, context):
         response = HttpResponse('Invalid field name.')
         response.status_code = 403
         return response
-    
+
     def invalid_rating_response(self, request, context):
         response = HttpResponse('Invalid rating value.')
         response.status_code = 403
         return response
-        
+
     def get_instance(self, content_type_id, object_id):
         return ContentType.objects.get(pk=content_type_id)\
             .get_object_for_this_type(pk=object_id)
@@ -115,12 +115,12 @@ class AddRatingView(object):
 class AddRatingFromModel(AddRatingView):
     def __call__(self, request, model, app_label, object_id, field_name, score):
         """__call__(request, model, app_label, object_id, field_name, score)
-        
+
         Adds a vote to the specified model field."""
         try:
             content_type = ContentType.objects.get(model=model, app_label=app_label)
         except ContentType.DoesNotExist:
             raise Http404('Invalid `model` or `app_label`.')
-        
+
         return super(AddRatingFromModel, self).__call__(request, content_type.id,
                                                         object_id, field_name, score)

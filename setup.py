@@ -1,11 +1,4 @@
-#!/usr/bin/env python
-
 from setuptools import setup, find_packages
-
-tests_require = [
-    'django',
-    # also requires the disqus fork of haystack
-]
 
 setup(
     name='django-ratings',
@@ -15,11 +8,12 @@ setup(
     description='Generic Ratings in Django',
     url='http://github.com/dcramer/django-ratings',
     install_requires=[
-        'django',
+        'Django>=1.8,<2.0',
     ],
-    tests_require=tests_require,
-    extras_require={'test': tests_require},
-    test_suite='djangoratings.runtests.runtests',
+    tests_require=[
+        'dj-database-url==0.3.0',
+        'MySQL-python==1.2.3',
+    ],
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
