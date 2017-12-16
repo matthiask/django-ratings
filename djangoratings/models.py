@@ -33,6 +33,7 @@ class Vote(models.Model):
     content_object = GenericForeignKey()
 
     class Meta:
+        app_label = 'djangoratings'
         unique_together = (('content_type', 'object_id', 'key', 'user', 'ip_address', 'cookie'))
 
     def __unicode__(self):
@@ -64,6 +65,7 @@ class Score(models.Model):
     content_object  = GenericForeignKey()
 
     class Meta:
+        app_label = 'djangoratings'
         unique_together = (('content_type', 'object_id', 'key'),)
 
     def __unicode__(self):
@@ -79,6 +81,7 @@ class SimilarUser(models.Model):
     objects = SimilarUserManager()
 
     class Meta:
+        app_label = 'djangoratings'
         unique_together = (('from_user', 'to_user'),)
 
     def __unicode__(self):
@@ -92,6 +95,7 @@ class IgnoredObject(models.Model):
     content_object = GenericForeignKey()
 
     class Meta:
+        app_label = 'djangoratings'
         unique_together = (('content_type', 'object_id'),)
 
     def __unicode__(self):

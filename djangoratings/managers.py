@@ -30,6 +30,10 @@ class VoteQuerySet(QuerySet):
 
 
 class VoteManager(Manager):
+
+    class Meta:
+        app_label = 'djangoratings'
+
     def get_query_set(self):
         return VoteQuerySet(self.model)
 
@@ -48,6 +52,10 @@ class VoteManager(Manager):
 
 
 class SimilarUserManager(Manager):
+
+    class Meta:
+        app_label = 'djangoratings'
+
     def get_recommendations(self, user, model_class, min_score=1):
         from djangoratings.models import Vote, IgnoredObject
 
