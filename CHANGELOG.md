@@ -1,6 +1,6 @@
 # Change Log
 
-## v 0.4.1 - Deprecated
+## v 0.4.1
 
 * Add `meta app_label`
 
