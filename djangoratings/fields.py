@@ -1,13 +1,13 @@
 from django.db.models import IntegerField, PositiveIntegerField
 from django.conf import settings
 
-import forms
+from . import forms
 import itertools
 from datetime import datetime
 
-from models import Vote, Score
-from default_settings import RATINGS_VOTES_PER_IP
-from exceptions import *
+from .models import Vote, Score
+from .default_settings import RATINGS_VOTES_PER_IP
+from .exceptions import *
 
 if 'django.contrib.contenttypes' not in settings.INSTALLED_APPS:
     raise ImportError("djangoratings requires django.contrib.contenttypes in your INSTALLED_APPS")
@@ -28,7 +28,7 @@ except ImportError:
 
 
 def md5_hexdigest(value):
-    return md5(value).hexdigest()
+    return md5(value.encode("utf-8")).hexdigest()
 
 
 class Rating(object):
@@ -117,7 +117,7 @@ class RatingManager(object):
             # TODO: move 'vote-%d.%d.%s' to settings or something
             cookie_name = 'vote-%d.%d.%s' % (kwargs['content_type'].pk, kwargs['object_id'], kwargs['key'][:6],) # -> md5_hexdigest?
             cookie = cookies.get(cookie_name)
-            if cookie:    
+            if cookie:
                 kwargs['cookie'] = cookie
             else:
                 kwargs['cookie__isnull'] = True
@@ -379,7 +379,7 @@ class RatingField(IntegerField):
         # TODO: order_by on this field should use the weighted algorithm
         raise NotImplementedError(self.get_db_prep_lookup)
         # if lookup_type in ('score', 'votes'):
-        #     lookup_type = 
+        #     lookup_type =
         #     return self.score_field.get_db_prep_lookup()
         if lookup_type == 'exact':
             return [self.get_db_prep_save(value)]
